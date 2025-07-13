@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server/server.js"
+    "start": "concurrently \"npm run start --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +18,10 @@
     "os": "^0.1.2",
     "path": "^0.12.7",
     "yt-dlp-exec": "^1.0.2"
+    
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
   }
+  
 }

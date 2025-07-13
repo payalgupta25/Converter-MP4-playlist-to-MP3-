@@ -4,15 +4,24 @@ import axios from "axios";
 function App() {
     const [url, setUrl] = useState("");
     const [mp3Files, setMp3Files] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [downloaded, setDownloaded] = useState(false);
 
     const handleConvert = async () => {
-        setMp3Files([]); // Clear previous results
+        setMp3Files([]);
+        setDownloaded(false);
+        setIsLoading(true);
+
         try {
-            const response = await axios.post("http://localhost:5000/convert", { url });
+            const response = await axios.post("/convert", { url });
             setMp3Files(response.data.files);
+            setDownloaded(true);
         } catch (error) {
             console.error("Conversion failed:", error);
             alert("Conversion failed! Please check the URL.");
+        } finally {
+            setIsLoading(false);
+            setUrl("");
         }
     };
 
@@ -30,13 +39,24 @@ function App() {
                     placeholder="Enter Playlist URL"
                     style={styles.input}
                 />
-                <button onClick={handleConvert} style={styles.button}>
-                    🎵 Convert
+                <button
+                    onClick={handleConvert}
+                    style={{
+                        ...styles.button,
+                        opacity: isLoading ? 0.7 : 1,
+                        cursor: isLoading ? "not-allowed" : "pointer",
+                    }}
+                    disabled={isLoading}
+                >
+                    {isLoading ? "🔄 Converting..." : "🎵 Convert"}
                 </button>
+
+                {isLoading && <p style={styles.status}>⏳ Downloading MP3s...</p>}
+                {downloaded && !isLoading && <p style={styles.success}>✅ All songs downloaded</p>}
 
                 {mp3Files.length > 0 && (
                     <div style={styles.results}>
-                        <h3 style={styles.downloadHeading}>Download MP3 Files</h3>
+                        <h3 style={styles.downloadHeading}>Playlist</h3>
                         <ul style={styles.list}>
                             {mp3Files.map((file, index) => (
                                 <li key={index} style={styles.listItem}>
@@ -50,6 +70,7 @@ function App() {
                 )}
             </div>
         </div>
+        
     );
 }
 
@@ -112,6 +133,16 @@ const styles = {
         color: "#1a73e8",
         textDecoration: "none",
         fontWeight: "500",
+    },
+    status: {
+        marginTop: "15px",
+        color: "#555",
+        fontStyle: "italic",
+    },
+    success: {
+        marginTop: "15px",
+        color: "green",
+        fontWeight: "bold",
     }
 };
 
