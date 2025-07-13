@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Paths
 const CLIENT_BUILD_PATH = path.join(__dirname, "../client/dist");
 app.use(express.static(CLIENT_BUILD_PATH));
-app.get("*", (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(CLIENT_BUILD_PATH, "index.html"));
 });
 const DOWNLOAD_DIR = path.join(os.homedir(), "Downloads");
