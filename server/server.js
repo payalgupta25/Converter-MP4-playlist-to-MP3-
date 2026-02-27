@@ -20,7 +20,11 @@ app.use(express.static(CLIENT_BUILD_PATH));
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(CLIENT_BUILD_PATH, "index.html"));
 });
-const DOWNLOAD_DIR = path.join(os.homedir(), "Downloads");
+const DOWNLOAD_DIR = path.join(__dirname, "downloads");
+
+if (!fs.existsSync(DOWNLOAD_DIR)) {
+  fs.mkdirSync(DOWNLOAD_DIR);
+}
 
 // Middleware
 app.use(cors());
