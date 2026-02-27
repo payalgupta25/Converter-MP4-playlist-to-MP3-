@@ -41,7 +41,14 @@ app.post("/convert", (req, res) => {
     // Step 1: List files before download
     const beforeFiles = new Set(fs.readdirSync(DOWNLOAD_DIR));
 
-    const command = `yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o "${path.join(DOWNLOAD_DIR, '%(playlist_index)s - %(title)s.%(ext)s')}" "${url}"`;
+    const command = `python3 -m yt_dlp -f bestaudio \
+--extract-audio \
+--audio-format mp3 \
+-o "${path.join(
+  DOWNLOAD_DIR,
+  '%(playlist_index)s - %(title)s.%(ext)s'
+)}" \
+"${url}"`;
 
     exec(command, (error, stdout, stderr) => {
         if (error) {
